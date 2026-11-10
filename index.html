@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Plano OAB 49º Exame</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: cabeçalho com contagem regressiva + rotina; linha do tempo de 34 semanas em cartões com checklist */
+:root{
+  --bg:#f6f5f2; --surface:#ffffff; --ink:#1d1f24; --muted:#5d6068; --line:#e3e0da;
+  --accent:#7d1e2c; --accent-soft:#f4e6e8; --ok:#2f6b45; --ok-soft:#e3f0e7;
+  --pA:#3d5a80; --pB:#a0602a; --pC:#7d1e2c; --p2:#4b5d3a;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Inter",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15161a; --surface:#1e2026; --ink:#ecebe8; --muted:#a3a5ad; --line:#30333b;
+  --accent:#e0838f; --accent-soft:#3a2328; --ok:#7cc79a; --ok-soft:#1f3328;
+  --pA:#8fb0d8; --pB:#e0a46c; --pC:#e0838f; --p2:#a9c08f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15161a; --surface:#1e2026; --ink:#ecebe8; --muted:#a3a5ad; --line:#30333b;
+  --accent:#e0838f; --accent-soft:#3a2328; --ok:#7cc79a; --ok-soft:#1f3328;
+  --pA:#8fb0d8; --pB:#e0a46c; --pC:#e0838f; --p2:#a9c08f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:980px;margin:0 auto;display:grid;gap:28px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:22px;font-weight:600}
+h3{font-size:17px;font-weight:600}
+.eyebrow{font:500 12px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.muted{color:var(--muted)}
+header{display:grid;gap:14px}
+.lede{max-width:65ch;margin:0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:2px}
+.stat b{font:800 28px var(--display);font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+section{display:grid;gap:14px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:8px;min-width:0}
+.panel ul{margin:0;padding-left:18px;display:grid;gap:4px}
+table.routine{width:100%;border-collapse:collapse;font-size:14px}
+table.routine td{padding:6px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.routine td:first-child{font:500 13px var(--mono);color:var(--muted);width:92px;font-variant-numeric:tabular-nums}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{font:500 13px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;border-radius:99px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters button:focus-visible,.week summary:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.weeks{display:grid;gap:10px}
+.week{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:10px}
+.week[data-p="A"]{--c:var(--pA)}.week[data-p="B"]{--c:var(--pB)}.week[data-p="C"]{--c:var(--pC)}.week[data-p="2"]{--c:var(--p2)}
+.week.now{box-shadow:0 0 0 2px var(--accent)}
+.week summary{list-style:none;cursor:pointer;padding:12px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center}
+.week summary::-webkit-details-marker{display:none}
+.wk{font:500 12px var(--mono);color:var(--c);min-width:44px}
+.wtitle{min-width:0}
+.wtitle h3{font-size:16px}
+.wtitle .d{font:500 12px var(--mono);color:var(--muted)}
+.chip{font:500 12px var(--mono);padding:3px 8px;border-radius:99px;background:var(--bg);color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.chip.done{background:var(--ok-soft);color:var(--ok)}
+.tag{display:inline-block;font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--accent);background:var(--accent-soft);padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:2px}
+.body{padding:0 16px 16px 74px;display:grid;gap:10px}
+.body .src{font-size:13px;color:var(--muted)}
+.body .src b{color:var(--ink);font-weight:600}
+.tasks{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.tasks label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.tasks input{margin-top:3px;width:17px;height:17px;accent-color:var(--ok);flex:none}
+.tasks li.today span{font-weight:600}
+.tasks li.today label::after{content:"hoje";font:500 11px var(--mono);color:var(--accent);background:var(--accent-soft);padding:1px 6px;border-radius:4px;margin-left:auto;align-self:center}
+.tasks input:checked+span{color:var(--muted);text-decoration:line-through}
+.status{font-size:12px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:0}
+@media (max-width:560px){.body{padding-left:16px}.week summary{grid-template-columns:1fr auto}.wk{grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Exame de Ordem Unificado · FGV · Gran Cursos</div>
+    <h1>Plano de estudos para o 49º Exame</h1>
+    <p class="lede muted">26 semanas até a prova objetiva e 8 semanas de 2ª fase em Direito Administrativo. Ritmo de 3–4 h nos dias úteis e um bloco maior no sábado. O método parte das questões e da leitura; a videoaula fica só para consulta. Marque as tarefas conforme avança; o progresso fica salvo.</p>
+    <div class="stats">
+      <div class="stat"><b id="d1">–</b><span>dias até a 1ª fase · 09/05/2027</span></div>
+      <div class="stat"><b id="d2">–</b><span>dias até a 2ª fase · 04/07/2027</span></div>
+      <div class="stat"><b id="pct">0%</b><span id="pctTxt">das tarefas concluídas</span><div class="bar"><i id="barI"></i></div></div>
+    </div>
+    <div class="status" id="saveStatus">Carregando seu progresso…</div>
+  </header>
+
+  <section>
+    <h2>Rotina da semana</h2>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Dias úteis (3h30)</h3>
+        <table class="routine">
+          <tr><td>1h00</td><td>Leitura do tema no livro de 1ª fase ou no PDF da aula, mais a lei seca</td></tr>
+          <tr><td>2h00</td><td>Questões FGV do mesmo tema (cerca de 40), lendo o comentário de todas</td></tr>
+          <tr><td>0h30</td><td>Caderno de erros: anotar o porquê de cada erro</td></tr>
+          <tr><td>Se travar</td><td>Assistir só a aula daquele ponto no Gran, em 2×</td></tr>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>Fim de semana</h3>
+        <table class="routine">
+          <tr><td>Sem. 1–15</td><td>Sábado: 3–4 h com o último tema da semana e a bateria de questões. Domingo: descanso</td></tr>
+          <tr><td>Sem. 16+</td><td>Sábado: descanso. Domingo à tarde: simulado completo em 5 h, no mesmo dia e turno das provas</td></tr>
+          <tr><td>Trajeto</td><td>Opcional: áudio das aulas do Gran como podcast</td></tr>
+          <tr><td>Descanso</td><td>Um dia livre por semana. Opcional: 30 min de caderno de erros</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Peso das matérias na 1ª fase</h2>
+    <div class="panel">
+      <p style="margin:0">80 questões, 40 acertos para aprovar. Os temas de 5 a 8 questões somam 62 pontos; é onde está a maior parte do tempo do plano.</p>
+      <ul>
+        <li><b>8</b> Ética (Estatuto da OAB, Regulamento Geral, Código de Ética)</li>
+        <li><b>6</b> Constitucional · Civil · Processo Civil · Penal · Processo Penal</li>
+        <li><b>5</b> Administrativo · Tributário · Trabalho · Processo do Trabalho</li>
+        <li><b>4</b> Empresarial</li>
+        <li><b>2</b> Direitos Humanos · Filosofia · Ambiental · Internacional · Eleitoral · Financeiro · ECA · Consumidor · Previdenciário</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Cronograma semana a semana</h2>
+    <div class="legend">
+      <span><i style="background:var(--pA)"></i>A · Base teórica</span>
+      <span><i style="background:var(--pB)"></i>B · Questões e revisão</span>
+      <span><i style="background:var(--pC)"></i>C · Reta final</span>
+      <span><i style="background:var(--p2)"></i>2ª fase · Administrativo</span>
+    </div>
+    <div class="filters" role="group" aria-label="Filtrar por etapa">
+      <button id="f-all" data-f="all" aria-pressed="true">Todas</button>
+      <button id="f-A" data-f="A" aria-pressed="false">Base teórica</button>
+      <button id="f-B" data-f="B" aria-pressed="false">Questões</button>
+      <button id="f-C" data-f="C" aria-pressed="false">Reta final</button>
+      <button id="f-2" data-f="2" aria-pressed="false">2ª fase</button>
+      <button id="f-open" data-f="open" aria-pressed="false">Pendentes</button>
+    </div>
+    <div class="weeks" id="weeks"></div>
+  </section>
+
+  <section>
+    <h2>Materiais além do Gran</h2>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Essenciais</h3>
+        <ul>
+          <li><b>Livro único de 1ª fase</b>: OAB Esquematizado (Saraiva) ou Revisaço OAB (Juspodivm). É a sua leitura base das semanas 1 a 15</li>
+          <li><b>PDFs das aulas do Gran</b>, se o curso tiver: alternativa ao livro, sem custo extra</li>
+          <li><b>Provas anteriores da FGV</b> (site da FGV/OAB): resolva as últimas 6 provas completas na reta final</li>
+          <li><b>Vade Mecum atualizado em 2027</b>, sem anotações, que é o permitido na 2ª fase. Use o mesmo desde já para se acostumar</li>
+          <li><b>Lei seca de Ética</b>: Lei 8.906/94, Regulamento Geral e Código de Ética de 2015. São 8 questões quase literais</li>
+          <li><b>Caderno de erros</b> em papel ou digital, revisado toda semana</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Complementares</h3>
+        <ul>
+          <li><b>Banco de questões</b> com filtro por banca FGV e por Exame (o do próprio Gran ou outro de sua preferência)</li>
+          <li><b>Flashcards no Anki</b> para prazos, súmulas e números da Ética</li>
+          <li><b>Podcasts e resumos em áudio</b> de OAB para revisar no trajeto</li>
+          <li><b>Informativos do STF e STJ</b> dos últimos 12 meses na reta final</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted" style="margin:0;font-size:13px">Os cursos do Gran citados ainda estão com o nome “48º Exame”. Quando saírem as turmas do 49º (provavelmente após a prova de 10/01/2027), troque pelo curso equivalente. Datas conforme o calendário da OAB, sujeitas a alteração.</p>
+  </section>
+</div>
+
+<script>
+const START = new Date(2026,10,9); // segunda, 09/11/2026
+const GR = {
+  ext:"1ª Fase OAB — Preparação Total (Curso Extensivo Completo)",
+  q:"1ª Fase OAB — Preparação por Questões Objetivas",
+  foc:"1ª Fase OAB — FocOAB! (Curso de Reta Final)",
+  adm:"2ª Fase OAB — Direito Administrativo",
+  admR:"2ª Fase OAB — Direito Administrativo (Repescagem)"
+};
+const W = [
+ ["A","Ética e Filosofia",GR.ext+" + curso avulso de Ética (Prof. Maria Christina & Cínthia Biesek)",[[0,"Ética: Lei 8.906/94, arts. 1º a 7º (atividade de advocacia e direitos do advogado)"],[1,"Ética: arts. 8º a 21 (inscrição, sociedades de advogados, advogado empregado)"],[2,"Ética: arts. 22 a 26 (honorários) + capítulo de honorários do Código de Ética"],[3,"Ética: arts. 27 a 43 (incompatibilidades, impedimentos, infrações e sanções)"],[4,"Código de Ética de 2015 (sigilo, publicidade, relação com o cliente) + Filosofia: Kelsen, Hart, Dworkin e Aristóteles"],[5,"Leitura rápida dos arts. 44 a 79 (órgãos da OAB) + 60 questões de Ética e Filosofia"]]],
+ ["A","Constitucional e Direitos Humanos",GR.ext+" + Constitucional (Prof. Flavia Bahia)",[[0,"Teoria da Constituição, poder constituinte, arts. 1º a 4º"],[1,"Direitos e garantias fundamentais: art. 5º"],[2,"Remédios constitucionais, direitos sociais e nacionalidade"],[3,"Organização do Estado e dos Poderes, processo legislativo"],[4,"Controle de constitucionalidade (ADI, ADC, ADO, ADPF)"],[5,"Direitos Humanos: sistema ONU e interamericano + 60 questões"]]],
+ ["A","Direito Civil I",GR.ext+" + Civil (Prof. Roberta Queiroz)",[[0,"LINDB e pessoas (personalidade e capacidade)"],[1,"Bens, negócio jurídico, prescrição e decadência"],[2,"Obrigações: modalidades, adimplemento e inadimplemento"],[3,"Contratos: teoria geral"],[4,"Contratos em espécie (compra e venda, doação, locação)"],[5,"Responsabilidade civil + 60 questões de Civil"]]],
+ ["A","Direito Civil II e Consumidor",GR.ext+" + Consumidor (Prof. Patricia Dreyer)",[[0,"Posse e propriedade"],[1,"Usucapião e direitos reais sobre coisa alheia"],[2,"Família: casamento, regime de bens, união estável, alimentos"],[3,"Sucessões: legítima, testamentária, inventário e partilha"],[4,"CDC: relação de consumo, fato e vício do produto e do serviço"],[5,"CDC: práticas abusivas, contratos, prescrição e decadência + 60 questões"]]],
+ ["A","Processo Civil I",GR.ext+" + Processo Civil (Profs. Raquel Bueno & Aline Cabral)",[[0,"Normas fundamentais, jurisdição e competência"],[1,"Partes, litisconsórcio e intervenção de terceiros"],[2,"Petição inicial, citação, contestação e reconvenção"],[3,"Provas, sentença e coisa julgada"],[4,"Tutelas provisórias"],[5,"60 questões de Processo Civil + revisão dos erros da semana"]]],
+ ["A","Processo Civil II e ECA",GR.ext+" + ECA (Prof. Patricia Dreyer)",[[0,"Teoria geral dos recursos e apelação"],[1,"Agravo, embargos de declaração, REsp e RE"],[2,"Cumprimento de sentença"],[3,"Execução de título extrajudicial"],[4,"ECA: direitos fundamentais, medidas protetivas, adoção, ato infracional"],[5,"Procedimentos especiais (monitória, possessórias, inventário) + 60 questões"]]],
+ ["A","Semana de Natal · revisão leve","Caderno de erros",[[0,"Revisar Ética na lei seca"],[1,"Revisar Constitucional: art. 5º e controle"],[2,"Simulado de 40 questões das matérias já vistas"],[5,"Corrigir o simulado e atualizar o caderno de erros"]],"24 e 25 livres"],
+ ["A","Direito Penal I",GR.ext+" + Penal (Prof. Michelle Tonon)",[[0,"Princípios e aplicação da lei penal"],[1,"Teoria do crime: fato típico e ilicitude"],[2,"Culpabilidade, erro e iter criminis"],[3,"Concurso de pessoas (dia mais leve)"],[5,"Penas e extinção da punibilidade + 40 questões"]],"01/01 livre"],
+ ["A","Penal II e Processo Penal I",GR.ext+" + Processo Penal (Profs. Lorena Ocampos & João Pedro Tonietti)",[[0,"Crimes contra a pessoa"],[1,"Crimes contra o patrimônio e contra a administração pública"],[2,"Lei de Drogas e crimes hediondos"],[3,"Processo Penal: princípios e inquérito policial"],[4,"Ação penal e competência"],[5,"Provas no processo penal + 60 questões"]]],
+ ["A","Processo Penal II e Eleitoral",GR.ext+" + Eleitoral (Prof. Odair José)",[[0,"Prisões e medidas cautelares"],[1,"Procedimento comum e júri"],[2,"Recursos e nulidades"],[3,"Habeas corpus e revisão criminal"],[4,"Eleitoral: direitos políticos, elegibilidade e inelegibilidade"],[5,"Eleitoral: propaganda e partidos + 60 questões"]]],
+ ["A","Administrativo e Ambiental",GR.ext+" + Administrativo (Prof. Matheus Carvalho) + Ambiental",[[0,"Princípios e organização administrativa"],[1,"Atos e poderes administrativos"],[2,"Licitações e contratos (Lei 14.133/21)"],[3,"Servidores, improbidade (Lei 8.429/92) e responsabilidade do Estado"],[4,"Bens públicos e intervenção na propriedade + ler o edital do 49º (sai 22/01)"],[5,"Ambiental: competências, licenciamento, responsabilidade + 60 questões"]],"Edital 22/01"],
+ ["A","Tributário e Financeiro",GR.ext+" + Tributário (Profs. Maria Christina & Paula Bervian) + Financeiro",[[0,"Competência tributária, princípios e imunidades"],[1,"Espécies tributárias"],[2,"Obrigação tributária e responsabilidade"],[3,"Crédito tributário: suspensão, extinção e exclusão"],[4,"Fazer a inscrição no 49º Exame (abre hoje, 29/01) + execução fiscal"],[5,"Financeiro: orçamento, LRF e precatórios + 60 questões"]],"Inscrições"],
+ ["A","Trabalho e Previdenciário",GR.ext+" + Trabalho (Profs. Aryanna Linhares & Déborah Paiva) + Previdenciário",[[0,"Princípios, relação de emprego e contrato de trabalho + conferir o pagamento da inscrição (prazo 05/02)"],[1,"Jornada, intervalos e férias"],[2,"Remuneração, salário e equiparação"],[3,"Rescisão, aviso prévio, estabilidades e FGTS"],[4,"Previdenciário: segurados, carência e benefícios"],[5,"60 questões de Trabalho e Previdenciário"]]],
+ ["A","Processo do Trabalho e Internacional",GR.ext+" + Processo do Trabalho (Profs. Aryanna Linhares & Gustavo Deitos)",[[2,"Competência e organização da Justiça do Trabalho (à tarde, depois da Quarta de Cinzas)"],[3,"Partes, procedimentos ordinário e sumaríssimo, audiência"],[4,"Recursos trabalhistas e execução"],[5,"Internacional público e privado (LINDB) + 40 questões"]],"Carnaval 08 e 09/02 livres"],
+ ["A","Empresarial",GR.ext+" + Empresarial (Profs. Lorraine Bonadio & Renato Borelli)",[[0,"Empresário, sociedade limitada unipessoal, nome e estabelecimento"],[1,"Sociedade limitada"],[2,"Sociedade anônima"],[3,"Títulos de crédito"],[4,"Falência"],[5,"Recuperação judicial + 60 questões de Empresarial"]]],
+ ["B","Ética, Constitucional, DH e Filosofia",GR.q,["Questões de Ética (100)","Questões de Constitucional (80)","Questões de DH e Filosofia (40)","Sábado: 1º simulado completo, 80 questões em 5 h","Corrigir o simulado e atualizar o caderno de erros"]],
+ ["B","Civil, Consumidor e ECA",GR.q,["Questões de Civil (120)","Questões de Consumidor e ECA (60)","Revisar resumos de Civil","Sábado: simulado completo"]],
+ ["B","Processo Civil e Empresarial",GR.q,["Questões de Processo Civil (120)","Questões de Empresarial (80)","Sábado: simulado completo"]],
+ ["B","Penal e Processo Penal",GR.q,["Questões de Penal (100)","Questões de Processo Penal (100)","Sábado: simulado completo"]],
+ ["B","Administrativo, Tributário, Ambiental e Financeiro",GR.q,["Questões de Administrativo (80)","Questões de Tributário (80)","Questões de Ambiental e Financeiro (40)","Sábado: simulado completo"]],
+ ["B","Trabalho, Proc. Trabalho, Previdenciário, Eleitoral e Internacional",GR.q,["Questões de Trabalho e Proc. Trabalho (120)","Questões das matérias de 2 pontos restantes (60)","Sábado: simulado completo"]],
+ ["C","Reta final I",GR.foc,["Revisão das matérias de 6 questões","Prova FGV anterior completa","Sábado: simulado completo"]],
+ ["C","Reta final II",GR.foc,["Revisão das matérias de 5 questões e Empresarial","Prova FGV anterior completa","Sábado: simulado completo"]],
+ ["C","Reta final III",GR.foc,["Revisão das matérias de 2 questões","Prova FGV anterior completa","Sábado: simulado completo"]],
+ ["C","Reta final IV",GR.foc,["Lei seca de Ética do começo ao fim","Informativos recentes STF/STJ","Prova FGV anterior completa","Sábado: último simulado completo"]],
+ ["C","Semana da prova",GR.foc,["Só revisão: caderno de erros e Ética","Separar documento e conferir o local de prova","Sábado de descanso","Domingo 09/05: 1ª fase"],"Prova 09/05"],
+ ["2","Estrutura das peças e procedimento comum",GR.adm,["Montar e organizar o Vade Mecum permitido","Estrutura geral de petição inicial","Ação de procedimento comum: teoria + 1 peça escrita","Começar sem esperar o resultado da 1ª fase"]],
+ ["2","Mandado de segurança",GR.adm,["MS individual e coletivo (Lei 12.016/09)","Escrever 2 peças de MS","4 questões discursivas"]],
+ ["2","Ação popular, ACP e outras ações",GR.adm,["Ação popular e ação civil pública","Habeas data e ação de improbidade","Escrever 2 peças","4 questões discursivas"]],
+ ["2","Recursos",GR.adm,["Apelação e agravo de instrumento","Recurso ordinário, especial e extraordinário","Escrever 2 peças recursais","4 questões discursivas"]],
+ ["2","Contestação e temas de discursivas",GR.adm+" + "+GR.admR,["Contestação e reclamação constitucional","Licitações, servidores, improbidade em discursivas","Sábado: simulado de peça + 4 questões em 5 h"]],
+ ["2","Simulados I",GR.admR,["Peças de exames anteriores da FGV","Corrigir pelo padrão de resposta oficial","Sábado: simulado completo"]],
+ ["2","Simulados II",GR.admR,["Revisar as peças com mais erros","Conferir índice e remissões do Vade Mecum","Sábado: simulado completo"]],
+ ["2","Semana da prova",GR.adm,["Revisão leve das estruturas de peça","Conferir o Vade Mecum nas regras do edital","Domingo 04/07: 2ª fase"],"Prova 04/07"]
+];
+const DN=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+const fmt=d=>d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+let done={}; let store=null; let saveTimer=null;
+const statusEl=document.getElementById("saveStatus");
+
+function weekDates(i){const s=new Date(START);s.setDate(s.getDate()+i*7);const e=new Date(s);e.setDate(e.getDate()+6);return [s,e];}
+function render(){
+  const box=document.getElementById("weeks"); box.innerHTML="";
+  const today=new Date(); today.setHours(0,0,0,0);
+  W.forEach((w,i)=>{
+    const [s,e]=weekDates(i); const now=today>=s&&today<=e;
+    const n=w[3].length; const c=w[3].filter((_,j)=>done[i+"-"+j]).length;
+    const d=document.createElement("details"); d.className="week"+(now?" now":""); d.dataset.p=w[0]; d.dataset.open=c<n?"1":"0";
+    if(now) d.open=true;
+    const sum=document.createElement("summary");
+    sum.innerHTML=`<span class="wk">SEM ${String(i+1).padStart(2,"0")}</span><span class="wtitle"><h3></h3><span class="d">${fmt(s)} – ${fmt(e)}${now?" · semana atual":""}</span></span><span class="chip ${c===n?"done":""}">${c}/${n}</span>`;
+    sum.querySelector("h3").textContent=w[1];
+    if(w[4]){const t=document.createElement("span");t.className="tag";t.textContent=w[4];sum.querySelector("h3").appendChild(t);}
+    const body=document.createElement("div"); body.className="body";
+    const src=document.createElement("div"); src.className="src"; if(w[0]==="A"&&i!==6){src.innerHTML="<b>Leitura:</b> livro de 1ª fase ou PDF do Gran, mais a lei seca. <b>Vídeo para consulta:</b> ";}else{src.innerHTML="<b>Material:</b> ";} src.append(w[2]);
+    const ul=document.createElement("ul"); ul.className="tasks";
+    if(i>=15){const r=document.createElement("div");r.className="src";r.innerHTML=w[0]==="2"?"<b>Rotina:</b> seg a sex, 1 peça ou 2 questões discursivas por dia, corrigidas pelo padrão da FGV · sáb descanso · dom à tarde simulado":"<b>Rotina:</b> seg a sex, 40 a 50 questões da matéria da semana + leitura dos erros · sáb descanso · dom à tarde simulado";body.appendChild(r);}
+    w[3].forEach((t,j)=>{const k=i+"-"+j;const li=document.createElement("li");
+      li.innerHTML=`<label><input type="checkbox" id="t${k}"><span></span></label>`;
+      let txt;
+      if(Array.isArray(t)){const dd=new Date(s);dd.setDate(dd.getDate()+t[0]);let x=t[1];if(t[0]<5&&!/questões|simulado|revisar/i.test(x))x+=" + 40 questões";txt=DN[t[0]]+" "+fmt(dd)+" · "+x;li.classList.add("day");if(dd.getTime()===today.getTime())li.classList.add("today");}
+      else txt=i>=15?t.replace(/^Sábado: (.*simulado.*)$/i,"Domingo à tarde: $1"):t;
+      li.querySelector("span").textContent=txt; const cb=li.querySelector("input"); cb.checked=!!done[k];
+      cb.addEventListener("change",()=>{if(cb.checked)done[k]=1;else delete done[k];updateCounts();queueSave();});
+      ul.appendChild(li);});
+    body.append(src,ul); d.append(sum,body); box.appendChild(d);
+  });
+  applyFilter(); updateCounts();
+}
+function updateCounts(){
+  let tot=0,ok=0;
+  document.querySelectorAll(".week").forEach((d,i)=>{const n=W[i][3].length;const c=W[i][3].filter((_,j)=>done[i+"-"+j]).length;tot+=n;ok+=c;
+    const ch=d.querySelector(".chip");ch.textContent=c+"/"+n;ch.classList.toggle("done",c===n);d.dataset.open=c<n?"1":"0";});
+  const p=tot?Math.round(ok/tot*100):0;
+  document.getElementById("pct").textContent=p+"%";
+  document.getElementById("pctTxt").textContent=`${ok} de ${tot} tarefas concluídas`;
+  document.getElementById("barI").style.width=p+"%";
+}
+let filter="all";
+function applyFilter(){document.querySelectorAll(".week").forEach(d=>{d.hidden=!(filter==="all"||(filter==="open"?d.dataset.open==="1":d.dataset.p===filter));});}
+document.querySelectorAll(".filters button").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.f;document.querySelectorAll(".filters button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));applyFilter();}));
+
+function days(t){const n=new Date();n.setHours(0,0,0,0);return Math.max(0,Math.round((t-n)/864e5));}
+document.getElementById("d1").textContent=days(new Date(2027,4,9));
+document.getElementById("d2").textContent=days(new Date(2027,6,4));
+
+function local(){try{return JSON.parse(localStorage.getItem("oab49d")||"{}")}catch(e){return {}}}
+function queueSave(){clearTimeout(saveTimer);statusEl.textContent="Salvando…";saveTimer=setTimeout(save,600);}
+async function save(){
+  try{localStorage.setItem("oab49d",JSON.stringify(done))}catch(e){}
+  if(store){try{await store.set({done,updatedAt:Date.now()});statusEl.textContent="Progresso salvo neste navegador.";}catch(e){statusEl.textContent="Não foi possível salvar na conta agora; ficou salvo neste navegador.";}}
+  else statusEl.textContent="Progresso salvo neste navegador.";
+}
+done=local(); render();
+(async()=>{
+  let timer=setTimeout(()=>{if(!store)statusEl.textContent="Progresso salvo neste navegador.";},10000);
+  try{
+    const db=await window.claude?.use?.("db"); const user=await window.claude?.use?.("user");
+    const id=user?await user.id():null;
+    if(db&&id){
+      store=db.collection("data/users/"+id).doc("progresso-diario");
+      const snap=await store.get();
+      if(snap.exists){const d=snap.data()||{};done=Object.assign({},d.done||{});render();}
+      else if(Object.keys(done).length){await store.set({done,updatedAt:Date.now()});}
+      statusEl.textContent="Progresso salvo neste navegador.";
+    } else statusEl.textContent="Progresso salvo neste navegador.";
+  }catch(e){statusEl.textContent="Progresso salvo neste navegador.";}
+  clearTimeout(timer);
+})();
+</script>
+
+</body>
+</html>
